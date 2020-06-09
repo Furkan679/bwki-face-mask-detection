@@ -34,39 +34,12 @@ model.add(Dense(64))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
-"""
-model.add(Conv2D(32, kernel_size = (3, 3),
-				 activation = 'relu',
-				 input_shape = (50,50,1)))
-
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-
-
-model.add(tf.keras.layers.InputLayer(input_shape = (50, 50, 1)))
-model.add(tf.keras.layers.Dense(128))
-model.add(tf.keras.layers.Dense(1))
-
-
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2,2)))
-model.add(Conv2D(64,(3,3)))
-model.add(Activation("relu"))
-model.add(MaxPooling2D(pool_size=(2,2)))
-model.add(Flatten())
-model.add(Dense(64))
-
-model.add(Dense(1))
-model.add(Activation('sigmoid'))
-"""
 
 model.compile(loss = "binary_crossentropy",
 			  optimizer = "adam",
 			  metrics = ['accuracy'])
 
 model.fit(x, y, batch_size=32, epochs=4, validation_split=0.1)
+
+model.save('model')
 
