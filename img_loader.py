@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image
 from matplotlib import pyplot
 
-path = "C:/Users/Furkan1/Desktop/bwki/datasets/3/observations-master/experiements/data/with_mask/0-with-mask.jpg"
+path = "datasets/3/observations-master/experiements/data/with_mask/0-with-mask.jpg"
 
 image = np.asarray(Image.open(path).resize((200, 200)))
 

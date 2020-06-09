@@ -20,5 +20,5 @@ def parse_xml(label_path):
     
     return result
 
-x = parse_xml("C:/Users/Furkan1/Desktop/bwki/datasets/1/labels/_2019101018405898714.xml")
+x = parse_xml("datasets/1/labels/_2019101018405898714.xml")
 

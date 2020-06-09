@@ -6,7 +6,7 @@ root = tree.getroot()
 
 # open a file for writing
 
-mask_data = open('C:/Users/Furkan1/Desktop/bwki/test.csv', 'w')
+mask_data = open('test.csv', 'w')
 
 # create the csv writer object
 
