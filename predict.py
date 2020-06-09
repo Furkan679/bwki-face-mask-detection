@@ -6,7 +6,7 @@ import cv2
 
 model = tf.keras.models.load_model('model')
 
-path = r'datasets\3\observations-master\experiements\data\without_mask\0.jpg'
+path = r'datasets\3\observations-master\experiements\dest_folder\train\without_mask\1.jpg'
 
 img_array = cv2.imread(path, cv2.IMREAD_GRAYSCALE)  
 new_array = cv2.resize(img_array, (50, 50))
