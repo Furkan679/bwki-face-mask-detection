@@ -8,7 +8,7 @@ import os
 
 model = tf.keras.models.load_model('model')
 
-path = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\eigeneDateien'
+path = r'datasets\eigeneDateien'
 
 
 predictions = []
