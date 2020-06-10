@@ -9,13 +9,14 @@ from PIL import Image
 
 dir = ['train', 'test']
 
-datadir = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\3\observations-master\experiements\dest_folder'
+datadir = r'datasets\3\observations-master\experiements\dest_folder'
 categories = ['with_mask', 'without_mask']
 	
 trainingData = []
 testData = []
 
 img_size = 50
+
 """
 def createTrainingData():
 	global img_size

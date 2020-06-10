@@ -8,26 +8,24 @@ import os
 
 model = tf.keras.models.load_model('model')
 
-path = r'datasets\eigeneDateien'
+path = r'datasets\eigeneDateien\download.jpg'
 
 
 predictions = []
-cat = ['1', '2', '3', '4', '5', '6']
-
+"""
 for img in tqdm(os.listdir(path)):  
 	img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)  
 	new_array = cv2.resize(img_array, (50, 50))
 	new_array = np.array(new_array).reshape(-1, 50, 50, 3)
 
-	predictions.append([float(model.predict(new_array)[0]),img])
+	predictions.append([float(model.predict(new_array)[0]), img])
 
 print(predictions)
-
 """
+
 img_array = cv2.imread(os.path.join(path), cv2.IMREAD_COLOR)  
 new_array = cv2.resize(img_array, (50, 50))
 new_array = np.array(new_array).reshape(-1, 50, 50, 3)
 
 prediction = model.predict(new_array)
 print(float(prediction[0]))
-"""

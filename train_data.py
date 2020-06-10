@@ -6,10 +6,9 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 import cv2
-import pickle
 from tqdm import tqdm
 
-tt_data_path = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\test_data'
+tt_data_path = r'test_data'
 
 pickle_in = open(os.path.join(tt_data_path, 'x.pickle'),"rb")
 x = pickle.load(pickle_in)
@@ -30,8 +29,6 @@ j = np.array(j)
 
 x = x.reshape(x.shape[0],50,50,3)
 i = i.reshape(x.shape[0],50,50,3)
-
-print(len(x), len(y))
 
 model = Sequential()
 
@@ -58,6 +55,7 @@ model.fit(x, y, batch_size=15, epochs=3, validation_split=0.1)
 
 test = model.evaluate(i, j)
 print(test)
+
 model.save('model')
 
 
