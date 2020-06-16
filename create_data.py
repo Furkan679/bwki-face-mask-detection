@@ -6,6 +6,8 @@ import cv2
 import pickle
 from tqdm import tqdm
 from PIL import Image
+import dlib
+from skimage import io
 
 dir = ['train', 'test']
 
@@ -16,53 +18,39 @@ trainingData = []
 testData = []
 
 img_size = 50
-
-"""
-def createTrainingData():
-	global img_size
-	for category in categories:
-		path = os.path.join(datadir, category)
-		classNum = categories.index(category)
-		for img in os.listdir(path):
-			try:
-				img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)	
-				new_array = cv2.resize(img_array, (img_size, img_size))
-				trainingData.append([new_array, classNum])
-			except Exception as e:
-				pass
-"""
-
+ctr = 0
 def createData():
 	for i in dir:
-	    for category in categories: 
+		for category in categories: 
 
-	    	class_num = 0
+			class_num = 0
+			path = os.path.join(datadir,i,category) 
+			if category == 'with_mask': class_num = 1
 
-	    	path = os.path.join(datadir,i,category) 
-	    	if category == 'with_mask': class_num = 1
+			for img in tqdm(os.listdir(path)): 
+				try:
+					img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
+					new_array = cv2.resize(img_array, (img_size, img_size))  
+					trainingData.append([new_array, class_num])  
+				except Exception as e:  
+					pass
 
-	    	for img in tqdm(os.listdir(path)): 
-	    		try:
-	    			img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
-	    			new_array = cv2.resize(img_array, (img_size, img_size))  
-	    			trainingData.append([new_array, class_num])  
-	    		except Exception as e:  
-	    			pass
+		for category in categories: 
 
-	    for category in categories: 
+			class_num = 0
 
-	    	class_num = 0
+			path = os.path.join(datadir,i,category) 
+			if category == 'with_mask': class_num = 1
 
-	    	path = os.path.join(datadir,i,category) 
-	    	if category == 'with_mask': class_num = 1
+			for img in tqdm(os.listdir(path)):
+				try:
+					img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
+					new_array = cv2.resize(img_array, (img_size, img_size))  
+					testData.append([new_array, class_num])  
+				except Exception as e:  
+					pass
 
-	    	for img in tqdm(os.listdir(path)): 
-	    		try:
-	    			img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
-	    			new_array = cv2.resize(img_array, (img_size, img_size))  
-	    			testData.append([new_array, class_num])  
-	    		except Exception as e:  
-	    			pass
+
 
 
 
@@ -112,3 +100,6 @@ pickle.dump(j, pickle_out)
 pickle_out.close()
 
 
+
+
+		
