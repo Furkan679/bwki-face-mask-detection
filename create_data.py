@@ -17,7 +17,7 @@ categories = ['with_mask', 'without_mask']
 trainingData = []
 testData = []
 
-img_size = 50
+img_size = 30
 ctr = 0
 def createData():
 	for i in dir:
@@ -49,10 +49,6 @@ def createData():
 					testData.append([new_array, class_num])  
 				except Exception as e:  
 					pass
-
-
-
-
 
 createData()
 

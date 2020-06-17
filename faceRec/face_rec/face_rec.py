@@ -10,17 +10,13 @@ import math
 from tqdm import tqdm
 import scandir
 
-'''
 def slice(image, face_location):
     # (y, x)
     #height = len(image)
     #length = len(image[0])
 
     #x = abs(face_location[3] - face_location[1])
-    image = image[face_location[0] : -1, :]
-    image = image[:, :face_location[1]]
-    image = image[:int(face_location[2]/2), :]
-    image = image[:, face_location[3]:]
+    image = image[face_location[0] : face_location[2], face_location[3] : face_location[1]]
 
     return image
 
@@ -37,15 +33,16 @@ def detAndSaveImg(path, end_name, img_name):
 
     except Exception as e:
         pass
+        #print(1)
 
 ctr = 0
 
-datdir = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\3\observations-master\experiements\dest_folder\test\without_mask'
-enddir = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\3\observations-master\experiements\dest_folder\cTest\without_mask'
+datdir = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\eigeneDateien'
+enddir = r'C:\Users\Furkan1\Documents\GitHub\bwki-face-mask\datasets\eigeneDateienKopie'
+#img_name = '17.jpg'
+#detAndSaveImg(datdir, img_name, img_name)
+
 
 for img in tqdm(os.listdir(datdir)):
     detAndSaveImg(datdir, os.path.join(enddir, '{}.jpg'.format(ctr)), img)
     ctr += 1
-'''
-#detAndSaveImg('faces', '400.jpg', 'obama.jpg')
-#
