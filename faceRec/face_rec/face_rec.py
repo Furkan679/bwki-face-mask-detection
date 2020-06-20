@@ -11,11 +11,6 @@ from tqdm import tqdm
 import scandir
 
 def slice(image, face_location):
-    # (y, x)
-    #height = len(image)
-    #length = len(image[0])
-
-    #x = abs(face_location[3] - face_location[1])
     image = image[face_location[0] : face_location[2], face_location[3] : face_location[1]]
 
     return image

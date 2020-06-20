@@ -1,5 +1,6 @@
 import os
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import numpy as np
 import pickle
 import tensorflow as tf
@@ -35,17 +36,18 @@ i = i.reshape(x.shape[0],img_size,img_size,3)
 
 model = Sequential()
 
-model.add(Conv2D(256, (2, 2), input_shape=(img_size, img_size, 3)))
+model.add(Conv2D(32, (7, 7), input_shape=(img_size, img_size, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+"""
+model.add(Conv2D(100, (2, 2)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(3, 3)))
-
-model.add(Conv2D(256, (2, 2)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(3, 3)))
-
+"""
 model.add(Flatten())  
+model.add(Dropout(0.5))
 
-model.add(Dense(64))
+model.add(Dense(128))
 model.add(Activation('relu'))
 
 model.add(Dense(1))
@@ -55,7 +57,7 @@ model.compile(loss = "binary_crossentropy",
 			  optimizer = "adam",
 			  metrics = ['accuracy'])
 
-model.fit(x, y, batch_size=16, epochs=20, validation_split=0.2)
+model.fit(x, y, batch_size=32, epochs=20, validation_split=0.2)
 
 test = model.evaluate(i, j)
 print(test)

@@ -9,9 +9,9 @@ from PIL import Image
 import dlib
 from skimage import io
 
-dir = ['train', 'test']
+#dir = ['train', 'test']
 
-datadir = r'datasets\3\observations-master\experiements\dest_folder'
+datadir = 'C:/Users/Furkan1/Documents/GitHub/bwki-face-mask/datasets/4/'
 categories = ['with_mask', 'without_mask']
 	
 trainingData = []
@@ -20,36 +20,39 @@ testData = []
 img_size = 30
 ctr = 0
 def createData():
-	for i in dir:
-		for category in categories: 
-
+	#for i in dir:
+	for category in categories: 
+		try:
 			class_num = 0
-			path = os.path.join(datadir,i,category) 
+
+			path = datadir + '/' + category
 			if category == 'with_mask': class_num = 1
 
 			for img in tqdm(os.listdir(path)): 
 				try:
-					img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
+					img_array = cv2.imread(path + '/' + img ,cv2.IMREAD_COLOR)  
 					new_array = cv2.resize(img_array, (img_size, img_size))  
 					trainingData.append([new_array, class_num])  
 				except Exception as e:  
+					print(1)
 					pass
+		except:
+			pass
+"""
+	for category in categories: 
+		class_num = 0
 
-		for category in categories: 
+		path = datadir + i + '/' + category
+		if category == 'without_mask': class_num = 1
 
-			class_num = 0
-
-			path = os.path.join(datadir,i,category) 
-			if category == 'with_mask': class_num = 1
-
-			for img in tqdm(os.listdir(path)):
-				try:
-					img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_COLOR)  
-					new_array = cv2.resize(img_array, (img_size, img_size))  
-					testData.append([new_array, class_num])  
-				except Exception as e:  
-					pass
-
+		for img in tqdm(os.listdir(path)):
+			try:
+				img_array = cv2.imread(path + '/' + img ,cv2.IMREAD_COLOR)  
+				new_array = cv2.resize(img_array, (img_size, img_size))  
+				testData.append([new_array, class_num])  
+			except Exception as e:  
+				pass
+"""
 createData()
 
 random.shuffle(trainingData)
