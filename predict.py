@@ -20,7 +20,7 @@ eye_cascade = cv2.CascadeClassifier('classifier/lefteye.xml')
 model = tf.keras.models.load_model('model') #lädt hiermit das zuvor trainierte Model
 
 def getShortestEye(eye, eyes):
-	shortest = 1000000
+	shortest = 2147483647
 	midCurrent = (eye[0], eye[1])
 
 	midOthers = []
