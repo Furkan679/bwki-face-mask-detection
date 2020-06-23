@@ -21,22 +21,13 @@ model = tf.keras.models.load_model('model') #lädt hiermit das zuvor trainierte 
 
 def getShortestEye(eye, eyes):
 	shortest = 1000000
-	#for i in range(len(eyes)):
-	#midCurrent = ((eye[0] + eye[2])/2, (eye[1] + eye[3])/2)
 	midCurrent = (eye[0], eye[1])
 
 	midOthers = []
 
-	#midOthers.append(((2*eyes[0][0] + eyes[0][2])/2, (2*eyes[0][2] + eyes[0][3])/2)) 
-	#midOthers.append(((2*eyes[1][0] + eyes[1][2])/2, (2*eyes[1][2] + eyes[1][3])/2)) 
-	#midOthers.append(((2*eyes[2][0] + eyes[2][2])/2, (2*eyes[2][2] + eyes[2][3])/2)) 
-	#midOthers.append(((2*eyes[3][0] + eyes[3][2])/2, (2*eyes[3][2] + eyes[3][3])/2)) 
-
-	#midOthers.append((eyes[0][0], (eyes[0][1]))) 
 	eyes = eyes.tolist()
 
 	for eye in eyes:
-		#print(eye[0])
 		midOthers.append((eye[0], eye[1])) 
 
 	distances = []
@@ -44,16 +35,12 @@ def getShortestEye(eye, eyes):
 	for distance in midOthers:
 		currentDistance = math.sqrt((distance[0] - midCurrent[0])**2 + (distance[1] - midCurrent[1])**2)
 		distances.append(currentDistance)
-		#print(currentDistance)
 		if currentDistance < shortest and currentDistance != 0:
 			shortest = currentDistance
 
 	return midOthers[int(distances.index(shortest))], int(distances.index(shortest))
 
-#print(groupEyePairs((0, 0, 2, 2), [(1, 1, 2, 2), (2, 2, 2, 2), (3, 3, 2, 2), (4, 4, 2, 2)]))
-
 def groupEyes(eyes):
-	#print(type(eyes))
 	new_eyes = []
 	for eye in eyes:
 			if len(new_eyes) == 0:
@@ -61,12 +48,10 @@ def groupEyes(eyes):
 
 			else:
 				for left, right in new_eyes:
-					#print(left, right)
-					#print(eye)
 					if eye.tolist() == left.tolist() or eye.tolist() == right.tolist():
-						#print(1)
 						break
 					break
+
 				new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
 			
 	return new_eyes[::2]
@@ -74,10 +59,12 @@ def groupEyes(eyes):
 def getleftmosteye(eyes):
 	leftmost = 9999999
 	leftmostindex = -1
+
 	for i in range(0,2):
 		if eyes[i][0] < leftmost:
 			leftmost = eyes[i][0]
 			leftmostindex = i
+
 	return eyes[leftmostindex]
 
 #definiert die Methode 'predict', die 1 für Maske und 0 für keine Maske zurückgibt
@@ -102,9 +89,12 @@ while(True):
 	#  (x0 Koordinate des oberen linken Punktes des Rechtecks, das das Gesicht umrahmt; y0; Länge in x Richtung von x0 aus; Länge in y Richtung von y0 aus)
 
 	#for (x,y,w,h) in face_location: # Für jedes Tupel aller gesichteten Gesichter wird folgendes gemacht:
+
 	if len(face_location) >= 2:
+
 		pairs = groupEyes(face_location)
 		new_eyes = []
+
 		for i in pairs:
 			new_eyes.append(getleftmosteye(i))
 
