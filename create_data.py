@@ -20,7 +20,7 @@ testData = []
 img_size = 30
 ctr = 0
 def createData():
-	#for i in dir:
+	
 	for category in categories: 
 		try:
 			class_num = 0
@@ -38,32 +38,13 @@ def createData():
 					pass
 		except:
 			pass
-"""
-	for category in categories: 
-		class_num = 0
+		pass
 
-		path = datadir + i + '/' + category
-		if category == 'without_mask': class_num = 1
-
-		for img in tqdm(os.listdir(path)):
-			try:
-				img_array = cv2.imread(path + '/' + img ,cv2.IMREAD_COLOR)  
-				new_array = cv2.resize(img_array, (img_size, img_size))  
-				testData.append([new_array, class_num])  
-			except Exception as e:  
-				pass
-"""
 createData()
 
 random.shuffle(trainingData)
 random.shuffle(testData)
 
-"""
-for i in range(10):
-	print(trainingData[i][1])
-	plt.imshow(trainingData[i][0], cmap='gray')  
-	plt.show()  
-"""
 x = []
 y = []
 
