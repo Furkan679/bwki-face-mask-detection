@@ -4,7 +4,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from numpy import array 
 import tensorflow as tf 
 import cv2 
-#import face_recognition 
 from PIL import Image 
 import math
 
