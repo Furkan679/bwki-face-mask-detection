@@ -10,7 +10,7 @@ import cv2
 from tqdm import tqdm
 import keras
 
-tt_data_path = r'test_data'
+tt_data_path = r'train_and_test_data'
 
 pickle_in = open(os.path.join(tt_data_path, 'x.pickle'),"rb")
 x = pickle.load(pickle_in)

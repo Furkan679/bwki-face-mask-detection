@@ -11,7 +11,7 @@ from skimage import io
 
 #dir = ['train', 'test']
 
-datadir = 'C:/Users/Furkan1/Documents/GitHub/bwki-face-mask/datasets/4/'
+datadir = 'C:/Users/Furkan1/Documents/GitHub/bwki-face-mask/dataset/'
 categories = ['with_mask', 'without_mask']
 	
 trainingData = []
@@ -54,11 +54,11 @@ for features, label in trainingData:
 
 x = np.array(x).reshape(-1, img_size, img_size, 3)
 
-pickle_out = open("test_data/x.pickle","wb")
+pickle_out = open("train_and_test_data/x.pickle","wb")
 pickle.dump(x, pickle_out)
 pickle_out.close()
 
-pickle_out = open("test_data/y.pickle","wb")
+pickle_out = open("train_and_test_data/y.pickle","wb")
 pickle.dump(y, pickle_out)
 pickle_out.close()
 
@@ -71,11 +71,11 @@ for features, label in trainingData:
 
 i = np.array(i).reshape(-1, img_size, img_size, 3)
 
-pickle_out = open("test_data/i.pickle","wb")
+pickle_out = open("train_and_test_data/i.pickle","wb")
 pickle.dump(i, pickle_out)
 pickle_out.close()
 
-pickle_out = open("test_data/j.pickle","wb")
+pickle_out = open("train_and_test_data/j.pickle","wb")
 pickle.dump(j, pickle_out)
 pickle_out.close()
 

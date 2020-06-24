@@ -19,6 +19,16 @@ eye_cascade = cv2.CascadeClassifier('classifier/lefteye.xml')
 
 model = tf.keras.models.load_model('model') #lädt hiermit das zuvor trainierte Model
 
+def getDistance(eye1, eye2):
+	mid1 = ((2*eye1[2] + eye1[0])/2, (2*eye1[3] + eye1[1])/2)
+	mid2 = ((2*eye2[2] + eye2[0])/2, (2*eye2[3] + eye2[1])/2)
+
+	#print(mid1, mid2)
+
+	distance = math.sqrt((eye1[0] - eye2[0])**2 + (eye1[1] - eye2[1])**2)
+
+	return distance
+
 def getShortestEye(eye, eyes):
 	shortest = 2147483647
 	midCurrent = (eye[0], eye[1])
@@ -53,7 +63,7 @@ def groupEyes(eyes):
 					break
 
 				new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
-			
+	
 	return new_eyes[::2]
 
 def getleftmosteye(eyes):
@@ -74,13 +84,17 @@ def predict(img):
 
 	new_img = Image.fromarray(img) # Konvertiert ein Numpy-array zu einem Bild
 
-	new_img.save('pred/test.jpg') # und speichert dieses als jpg ab
+	new_img.save('temp_storage/test.jpg') # und speichert dieses als jpg ab
 
-	img_array = cv2.imread('pred/test.jpg', cv2.IMREAD_COLOR)  # um es hier einzulesen
-	new_array = cv2.resize(img_array, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
+	new_array = cv2.imread('temp_storage/test.jpg', cv2.IMREAD_COLOR)  # um es hier einzulesen
+	new_array = cv2.resize(new_array, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
 	new_array = array(new_array).reshape(-1, img_size, img_size, 3) # das Bild wird lediglich ins richtige Format gebracht
 
 	return model.predict(new_array)[0][0] # hier gibt die Methode zurück, was das trainierte Model zurückgibt, wenn new_array getestet wird
+
+def slice(image, distance, x, y, w, h):
+	image = image[int(y-distance/2):int(y+w+1.5*distance), int(x-0.5*distance):int(x+w+1.5*distance)]
+	return image
 
 while(True):
 	ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
@@ -93,25 +107,35 @@ while(True):
 	if len(face_location) >= 2:
 
 		pairs = groupEyes(face_location)
+		#print(pairs)
 		new_eyes = []
+		distances = []
+
+		for (left, right) in pairs:
+			distances.append(getDistance(left.tolist(), right.tolist()))
 
 		for i in pairs:
 			new_eyes.append(getleftmosteye(i))
 
-		#print(new_eyes)
+		ctr = 0
 		for eye in new_eyes:
+			#print(eye)
 			(x, y, w, h) = eye
-			new_image = image[y-20:y+w+100, x-20:x+w+100] # Das Bild wird zugeschnitten, damit man das Gesicht allein untersuchen kann
+			print(distances[ctr])
+			new_image = slice(image, distances[ctr], x, y, w, h)
+			#new_image = image[y-20:y+w+100, x-20:x+w+100] # Das Bild wird zugeschnitten, damit man das Gesicht allein untersuchen kann
 
 			pred = predict(new_image) # Das zugeschnittene Bild wird nun getestet
 			#print(pred)
 			text = 'Mask' if pred == 1 else 'No Mask' # Der Text, der ausgegeben wird ist 'Mask', wenn predict(new_image) 1 zurückgibt, 0 andernfalls
 
-			cv2.rectangle(image, (x-20, y-20), (x+w+100, y+h+100), (0, 255, 0)) # jetzt wird ein Rechteck aufs Bild image gemalt in der Form:
+			cv2.rectangle(image, (int(x-0.5*distances[ctr]), int(y-distances[ctr]/2)), (int(x+w+1.5*distances[ctr]), int(y+w+1.5*distances[ctr])), (0, 255, 0)) # jetzt wird ein Rechteck aufs Bild image gemalt in der Form:
 			# cv2.rectangle(Bild, auf das das RE gemalt wird; (Koordinaten des linken oberen Punktes), (Verschiebung in x und y Richtung), (Farbe als RGB-Wert))
 
 			cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0))
 			# nun wird der text über das RE geschrieben
+
+			ctr += 1
 
 	cv2.imshow('frame', image) # Diese Methode erzeugt ein Fenster und Inhalt ist das aktuelle Bild, der Name des Fensters ist 'frame'
 
