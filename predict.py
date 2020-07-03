@@ -79,14 +79,8 @@ def getleftmosteye(eyes):
 #definiert die Methode 'predict', die 1 für Maske und 0 für keine Maske zurückgibt
 def predict(img):
 	global img_size
-	img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # konvertiert das Farbspektrum von BGR zu RGB, weil das Dataset in RGB ist, cv2 aber mit BGR arbeitet
-
-	new_img = Image.fromarray(img) # Konvertiert ein Numpy-array zu einem Bild
-
-	new_img.save('temp_storage/test.jpg') # und speichert dieses als jpg ab
-
-	new_array = cv2.imread('temp_storage/test.jpg', cv2.IMREAD_COLOR)  # um es hier einzulesen
-	new_array = cv2.resize(new_array, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
+	
+	new_array = cv2.resize(img, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
 	new_array = array(new_array).reshape(-1, img_size, img_size, 3) # das Bild wird lediglich ins richtige Format gebracht
 
 	return model.predict(new_array)[0][0] # hier gibt die Methode zurück, was das trainierte Model zurückgibt, wenn new_array getestet wird
