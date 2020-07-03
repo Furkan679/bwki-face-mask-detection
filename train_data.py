@@ -5,54 +5,32 @@ import numpy as np
 import pickle
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 import cv2
 from tqdm import tqdm
 import keras
 
-tt_data_path = r'train_and_test_data'
+IMG_SIZE = 30
 
-pickle_in = open(os.path.join(tt_data_path, 'x.pickle'),"rb")
-x = pickle.load(pickle_in)
-
-pickle_in = open(os.path.join(tt_data_path, 'y.pickle'),"rb")
-y = pickle.load(pickle_in)
-
-pickle_in = open(os.path.join(tt_data_path, 'i.pickle'),"rb")
-i = pickle.load(pickle_in)
-
-pickle_in = open(os.path.join(tt_data_path, 'j.pickle'),"rb")
-j = pickle.load(pickle_in)
+x = np.load("train_and_test_data/x.npy")
+y = np.load("train_and_test_data/y.npy")
 
 x = np.array(x / 255.0)
 y = np.array(y)
-i = np.array(i / 255.0)
-j = np.array(j)
 
-img_size = 30
 
-x = x.reshape(x.shape[0],img_size,img_size,3)
-i = i.reshape(x.shape[0],img_size,img_size,3)
 
-model = Sequential()
+x = x.reshape(x.shape[0], IMG_SIZE, IMG_SIZE, 3)
 
-model.add(Conv2D(32, (3, 3), input_shape=(img_size, img_size, 3), activation = 'tanh'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Flatten())  
-
-model.add(Dense(256))
-model.add(Activation('relu'))
-
-model.add(Dense(1))
-model.add(Activation('sigmoid'))
+model = Sequential([Conv2D(32, (3, 3), input_shape=(IMG_SIZE, IMG_SIZE, 3), activation = 'tanh'),
+					MaxPooling2D(pool_size=(2, 2)),
+					Flatten(),
+					Dense(256, activation = 'relu'),
+					Dense(1, activation = 'sigmoid')])
 
 model.compile(loss = "binary_crossentropy",
 			  optimizer = "adam",
 			  metrics = ['accuracy'])
 
 model.fit(x, y, batch_size=32, epochs=20, validation_split=0.2)
-
-test = model.evaluate(i, j)
-
 model.save('model')
