@@ -1,10 +1,10 @@
 #import aller nötigen Module
 import os 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  
-from numpy import array 
+import numpy as np
 import tensorflow as tf 
 import cv2 
-from PIL import Image 
+from PIL import Image, ImageGrab
 import math
 
 #zwingt das System, die Grafikkarte zu benutzen
@@ -13,15 +13,15 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 img_size = 30
 
 cap = cv2.VideoCapture(0) # legt den Videostreamort fest, hier ist es die WebCam mit dem Index 0
-eye_cascade = cv2.CascadeClassifier('classifier/lefteye.xml')
+eye_cascade = cv2.CascadeClassifier('classifier/lefteye.xml') #lädt den Augenerkennungsklassifizier
 
 model = tf.keras.models.load_model('model') #lädt hiermit das zuvor trainierte Model
 
 def getDistance(eye1, eye2): # Diese Methode ermittelt den Abstand zweier Augen mit simpler Geometrie
-	mid1 = ((2*eye1[2] + eye1[0])/2, (2*eye1[3] + eye1[1])/2)
-	mid2 = ((2*eye2[2] + eye2[0])/2, (2*eye2[3] + eye2[1])/2)
+	mid1 = ((2*eye1[2] + eye1[0])/2, (2*eye1[3] + eye1[1])/2) # berechnet die Mitte  
+	mid2 = ((2*eye2[2] + eye2[0])/2, (2*eye2[3] + eye2[1])/2) # beider Augen
 
-	distance = math.sqrt((eye1[0] - eye2[0])**2 + (eye1[1] - eye2[1])**2)
+	distance = math.sqrt((eye1[0] - eye2[0])**2 + (eye1[1] - eye2[1])**2) # Abstandsformel
 	return distance
 
 def getShortestEye(eye, eyes): #Diese Methode ordnet dem ersten übergebenen Auge, das ihm zugehörige, d.h. das zu ihm kürzeste Auge zu
@@ -67,28 +67,37 @@ def getleftmosteye(eyes): # Findet das linke von 2 Augen
 	else: 
 		return eyes[1]
 
+def checkSame(eyes):
+	pass
+
+
 #definiert die Methode 'predict', die 1 für Maske und 0 für keine Maske zurückgibt
 def predict(img):
 	global img_size
+	try:
 	
-	new_array = cv2.resize(img, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
-	new_array = array(new_array).reshape(-1, img_size, img_size, 3) # das Bild wird lediglich ins richtige Format gebracht
+		new_array = cv2.resize(img, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
+		new_array = np.array(new_array).reshape(-1, img_size, img_size, 3) # das Bild wird lediglich ins richtige Format gebracht
 
-	return model.predict(new_array)[0][0] # hier gibt die Methode zurück, was das trainierte Model zurückgibt, wenn new_array getestet wird
+		return model.predict(new_array)[0][0] # hier gibt die Methode zurück, was das trainierte Model zurückgibt, wenn new_array getestet wird
+	except:
+		pass
 
-def slice(image, distance, x, y, w, h): # schneidet das Bild anhand der Gesichtsproportionen zu einem kleinern zu
+def slice(image, distance, x, y, w, h): # schneidet das Bild anhand der Gesichtsproportionen zu einem kleinern zu, das das NN als Input bekommt
 	image = image[int(y-distance/2):int(y+w+1.5*distance), int(x-0.5*distance):int(x+w+1.5*distance)]
 	return image
 
 while(True):
-	ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
+	#ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
+	image =  np.array(ImageGrab.grab(bbox=(0,40,1000,1000)))
+	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 	face_location = eye_cascade.detectMultiScale(image,1.3,5) # mit Hilfe des Klassifizierers werden alle Gesichter erkannt und wie folgt gespeichert:
 	# [(Gesicht 1), (Gesicht 2), ..., (Gesicht n)]
 	#  (x0 Koordinate des oberen linken Punktes des Rechtecks, das das Gesicht umrahmt; y0; Länge in x Richtung von x0 aus; Länge in y Richtung von y0 aus)
 
 	if len(face_location) >= 2:
-
 		pairs = groupEyes(face_location)
+
 		new_eyes = []
 		distances = []
 
@@ -99,8 +108,10 @@ while(True):
 			new_eyes.append(getleftmosteye(i))
 
 		ctr = 0
+		print("pairs: {}".format(pairs))
 		for eye in new_eyes:
 			(x, y, w, h) = eye
+			#print("{}. Face: {}".format(ctr, (x, y, w, h)))
 			print(distances[ctr])
 			new_image = slice(image, distances[ctr], x, y, w, h) # Das Bild wird zugeschnitten, damit man das Gesicht allein untersuchen kann
 
