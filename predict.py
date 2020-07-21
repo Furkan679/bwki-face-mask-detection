@@ -88,9 +88,12 @@ def slice(image, distance, x, y, w, h): # schneidet das Bild anhand der Gesichts
 	return image
 
 while(True):
-	#ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
+
 	image =  np.array(ImageGrab.grab(bbox=(0,40,1000,1000)))
 	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+	
+	#ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
+
 	face_location = eye_cascade.detectMultiScale(image,1.3,5) # mit Hilfe des Klassifizierers werden alle Gesichter erkannt und wie folgt gespeichert:
 	# [(Gesicht 1), (Gesicht 2), ..., (Gesicht n)]
 	#  (x0 Koordinate des oberen linken Punktes des Rechtecks, das das Gesicht umrahmt; y0; Länge in x Richtung von x0 aus; Länge in y Richtung von y0 aus)
