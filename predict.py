@@ -23,7 +23,7 @@ def getDistance(eye1, eye2): # Diese Methode ermittelt den Abstand zweier Augen 
 
 	distance = math.sqrt((eye1[0] - eye2[0])**2 + (eye1[1] - eye2[1])**2) # Abstandsformel
 	return distance
-
+"""
 def getShortestEye(eye, eyes): #Diese Methode ordnet dem ersten übergebenen Auge, das ihm zugehörige, d.h. das zu ihm kürzeste Auge zu
 	shortest = 2147483647
 	midCurrent = (eye[0], eye[1])
@@ -49,18 +49,31 @@ def groupEyes(eyes): # Fasst alle Augenpaare zusammen
 	new_eyes = []
 	for eye in eyes:
 			if len(new_eyes) == 0:
-				new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
+				print(eyes[getShortestEye(eye, eyes)[1]])
+				if eyes[getShortestEye(eye, eyes)[1]] not in new_eyes:
+					new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
 
 			else:
 				for left, right in new_eyes:
 					if eye.tolist() == left.tolist() or eye.tolist() == right.tolist():
 						break
 					break
+				if eyes[getShortestEye(eye, eyes)[1]] not in new_eyes:
+					new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
 
-				new_eyes.append((eye, (eyes[getShortestEye(eye, eyes)[1]])))
-	
 	return new_eyes[::2]
-
+"""
+def groupEyes(eyes):
+	eyes = eyes.tolist()
+	c = 0
+	for y in range(len(eyes)-1, 0, -1): #<- Bubble-Sort
+		for i in range(y):
+			if eyes[i] > eyes[i+1]:
+				c = eyes[i]
+				eyes[i] = eyes[i+1]
+				eyes[i+1] = c
+	return np.array(eyes)    
+"""
 def getleftmosteye(eyes): # Findet das linke von 2 Augen
 	if eyes[0][0] < eyes[1][0]: 
 		return eyes[0]
@@ -68,14 +81,29 @@ def getleftmosteye(eyes): # Findet das linke von 2 Augen
 		return eyes[1]
 
 def checkSame(eyes):
-	pass
-
+	counter = 0
+	eyes = eyes.tolist()
+	for eye in eyes:
+		for comparision in eyes:
+			#print('Eye: {}\nComparision: {}'.format(eye, comparision))
+			if eye.tolist() == comparision.tolist(): counter += 1
+		if counter > 1: print(1)
+		else: counter = 0 
+"""
+def elimOddEye(eyes): 
+	distances = [0 for i in range(len(eyes))]
+	index = 0
+	for i in range(len(eyes)):
+		for j in range(len(eyes)):
+			if i != j:
+				distances[i] += getDistance(eyes[i], eyes[j])
+				print('Distance between {}-th and {}-th eye: {}'.format(i, j, getDistance(eyes[i], eyes[j])))
+	return np.argmax(distances)
 
 #definiert die Methode 'predict', die 1 für Maske und 0 für keine Maske zurückgibt
 def predict(img):
 	global img_size
 	try:
-	
 		new_array = cv2.resize(img, (img_size, img_size)) # das Bild wird in die nötige Größe, das heißt in die Eingabe-Form des NN (30, 30) geresized
 		new_array = np.array(new_array).reshape(-1, img_size, img_size, 3) # das Bild wird lediglich ins richtige Format gebracht
 
@@ -88,10 +116,9 @@ def slice(image, distance, x, y, w, h): # schneidet das Bild anhand der Gesichts
 	return image
 
 while(True):
-
 	image =  np.array(ImageGrab.grab(bbox=(0,40,1000,1000)))
 	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-	
+
 	#ret, image = cap.read() # read() gibt einen Tupel zurück, ret ist nicht relevant
 
 	face_location = eye_cascade.detectMultiScale(image,1.3,5) # mit Hilfe des Klassifizierers werden alle Gesichter erkannt und wie folgt gespeichert:
@@ -103,19 +130,19 @@ while(True):
 
 		new_eyes = []
 		distances = []
+		pairs = pairs.tolist()
+		if len(pairs) % 2 != 0:
+			pairs.pop(elimOddEye(pairs))
 
-		for (left, right) in pairs:
-			distances.append(getDistance(left.tolist(), right.tolist()))
+		for i in range(0, len(pairs)-1, 2):
+			distances.append(getDistance(pairs[i], pairs[i+1]))
 
-		for i in pairs:
-			new_eyes.append(getleftmosteye(i))
+		for i in range(0, len(pairs)-1, 2):
+			new_eyes.append(pairs[i])
 
-		ctr = 0
-		print("pairs: {}".format(pairs))
-		for eye in new_eyes:
+		for (ctr, eye) in enumerate(new_eyes):
 			(x, y, w, h) = eye
-			#print("{}. Face: {}".format(ctr, (x, y, w, h)))
-			print(distances[ctr])
+
 			new_image = slice(image, distances[ctr], x, y, w, h) # Das Bild wird zugeschnitten, damit man das Gesicht allein untersuchen kann
 
 			pred = predict(new_image) # Das zugeschnittene Bild wird nun getestet
@@ -127,8 +154,6 @@ while(True):
 
 			cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0))
 			# nun wird der text über das RE geschrieben
-
-			ctr += 1
 
 	cv2.imshow('frame', image) # Diese Methode erzeugt ein Fenster und Inhalt ist das aktuelle Bild, der Name des Fensters ist 'frame'
 
